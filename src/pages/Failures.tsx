@@ -138,11 +138,14 @@ export default function Failures() {
   const newTimer = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
   const updatedTimer = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
 
-  const { isLoading, isError } = useQuery<CiRun[]>({
+  const { data: initialRuns, isLoading, isError } = useQuery<CiRun[]>({
     queryKey: ['failures-list'],
     queryFn: () => api('/runs/history?limit=100'),
-    onSuccess: (data: CiRun[]) => setRuns(data),
-  } as Parameters<typeof useQuery<CiRun[]>>[0])
+  })
+
+  useEffect(() => {
+    if (initialRuns) setRuns(initialRuns)
+  }, [initialRuns])
 
   // ── Realtime ───────────────────────────────────────────────────────────────
   useEffect(() => {
