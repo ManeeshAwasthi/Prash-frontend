@@ -251,7 +251,7 @@ export default function Repos() {
           <GitBranch className="h-10 w-10 text-zinc-700 mx-auto" />
           <div>
             <p className="text-zinc-300 font-medium mb-1">No repos connected</p>
-            <p className="text-zinc-500 text-sm">Connect a GitHub repo to start watching CI.</p>
+            <p className="text-zinc-500 text-sm">Connect a repo to let Prash watch your CI. We only read workflow logs — never your source.</p>
           </div>
           <Button
             className="bg-violet-600 hover:bg-violet-500 text-white gap-2"

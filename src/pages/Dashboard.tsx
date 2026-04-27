@@ -305,8 +305,8 @@ export default function Dashboard() {
           {!runsLoading && !runsError && recentRuns && recentRuns.length === 0 && (
             <div className="py-14 text-center">
               <Zap className="h-8 w-8 text-zinc-700 mx-auto mb-3" />
-              <p className="text-zinc-500 text-sm">No failures yet.</p>
-              <p className="text-zinc-700 text-xs mt-1">Push something broken to a connected repo!</p>
+              <p className="text-zinc-500 text-sm">All quiet.</p>
+              <p className="text-zinc-700 text-xs mt-1">Recent activity from your connected repos will appear here.</p>
             </div>
           )}
 

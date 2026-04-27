@@ -263,9 +263,9 @@ export default function Failures() {
             <XCircle className="h-8 w-8 text-zinc-700 mx-auto mb-3" />
             {runs.length === 0 ? (
               <>
-                <p className="text-zinc-500 text-sm">No failures yet.</p>
+                <p className="text-zinc-500 text-sm">Nothing's broken — yet.</p>
                 <p className="text-zinc-700 text-xs mt-1">
-                  Push something broken to a connected repo!
+                  When CI fails on a connected repo, you'll see the diagnosis and fix here in real time.
                 </p>
               </>
             ) : (

@@ -52,8 +52,8 @@ export default function History() {
         </div>
       ) : !data?.length ? (
         <div className="text-center py-24 text-zinc-500">
-          <p className="text-lg mb-1">No runs yet.</p>
-          <p className="text-sm">Connect a repo and push some code to get started.</p>
+          <p className="text-lg mb-1">No history to show.</p>
+          <p className="text-sm">Once Prash starts diagnosing failures, every run lands here.</p>
         </div>
       ) : (
         <div className="rounded-lg border border-zinc-800 overflow-hidden">
