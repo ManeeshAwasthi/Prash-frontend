@@ -43,6 +43,41 @@
   }
 }
 
+/* Grid background pattern */
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Dot grid pattern */
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Glow utilities */
+.glow-violet {
+  box-shadow: 0 0 60px -10px rgba(124, 58, 237, 0.4);
+}
+
+.glow-violet-sm {
+  box-shadow: 0 0 30px -5px rgba(124, 58, 237, 0.3);
+}
+
+/* Text gradient */
+.text-gradient-violet {
+  background: linear-gradient(135deg, #a78bfa, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Border white utilities */
+.border-white\/8 { border-color: rgba(255,255,255,0.08); }
+.border-white\/12 { border-color: rgba(255,255,255,0.12); }
+
 /* shadcn utility */
 .cn-bg-background { background-color: hsl(var(--background)); }
 .cn-bg-card { background-color: hsl(var(--card)); }
