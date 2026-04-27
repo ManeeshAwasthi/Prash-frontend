@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   Zap, GitBranch, Search, GitPullRequest, CheckCircle2,
   ArrowRight, Shield, Brain, Code2, Cpu, ChevronRight,
-  Star, TrendingUp, Clock,
+  TrendingUp, Clock,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/AuthContext'
@@ -15,13 +15,6 @@ export default function Landing() {
   useEffect(() => {
     if (!loading && user) navigate('/dashboard', { replace: true })
   }, [user, loading, navigate])
-
-  const stats = [
-    { value: '500+', label: 'CI runs analyzed' },
-    { value: '10K+', label: 'Issues fixed' },
-    { value: '73%', label: 'Faster resolution' },
-    { value: '99.9%', label: 'Uptime' },
-  ]
 
   const agents = [
     {
@@ -66,33 +59,6 @@ export default function Landing() {
     },
   ]
 
-  const testimonials = [
-    {
-      quote: 'Prash caught a critical regression before it reached production. Saved us 4 hours of incident response.',
-      author: 'Alex Chen',
-      role: 'Engineering Lead',
-      company: 'TechCorp',
-      metric: '45 fixes/month',
-      stars: 5,
-    },
-    {
-      quote: 'Reduced our CI failure resolution time from 2 hours to 15 minutes. Our on-call rotation is actually bearable now.',
-      author: 'Sarah Patel',
-      role: 'DevOps Engineer',
-      company: 'StartupXYZ',
-      metric: '73% faster',
-      stars: 5,
-    },
-    {
-      quote: 'Game changer. We shipped 3x more features last quarter because we stopped debugging flaky CI.',
-      author: 'Mike Johnson',
-      role: 'CTO',
-      company: 'ScaleUp Inc',
-      metric: '10x velocity',
-      stars: 5,
-    },
-  ]
-
   const steps = [
     { icon: GitBranch, label: 'Install GitHub App', sub: '30 seconds' },
     { icon: Search, label: 'Failure detected', sub: 'Real-time' },
@@ -128,7 +94,6 @@ export default function Landing() {
               How it works
             </button>
             <a href="#agents" className="hover:text-zinc-100 transition-colors">Agents</a>
-            <a href="#testimonials" className="hover:text-zinc-100 transition-colors">Testimonials</a>
           </div>
 
           <div className="flex items-center gap-3">
@@ -170,13 +135,15 @@ export default function Landing() {
             Prash automatically detects CI failures, diagnoses root causes, creates fixes, and verifies they work—all without human intervention.
           </p>
 
+          <p className="text-sm text-zinc-500 mb-8">Currently in early access — onboarding design partners.</p>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Button
               size="lg"
               className="bg-violet-600 hover:bg-violet-500 text-white px-8 h-12 text-base rounded-xl shadow-lg shadow-violet-600/25 hover:shadow-violet-500/30 transition-all"
               onClick={() => navigate('/login')}
             >
-              Get started free
+              Get early access
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             <Button
@@ -197,10 +164,6 @@ export default function Landing() {
             <span className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-violet-400" />
               Works with any GitHub Actions
-            </span>
-            <span className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-violet-400" />
-              SOC 2 Type II
             </span>
           </div>
         </div>
@@ -242,23 +205,6 @@ export default function Landing() {
                 })}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats bar */}
-      <section className="border-y border-white/5 bg-white/[0.02]">
-        <div className="max-w-7xl mx-auto px-6 py-10">
-          <p className="text-center text-zinc-600 text-xs uppercase tracking-widest mb-8 font-medium">
-            Trusted by engineering teams
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, idx) => (
-              <div key={idx} className="text-center">
-                <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
-                <div className="text-sm text-zinc-500">{stat.label}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -349,44 +295,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section id="testimonials" className="px-6 py-24 border-b border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <p className="text-violet-400 text-sm font-medium uppercase tracking-widest mb-3">Testimonials</p>
-            <h2 className="text-4xl font-bold mb-4 tracking-tight">Loved by engineering teams</h2>
-            <p className="text-zinc-400 text-lg">See what developers are saying about Prash</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, idx) => (
-              <div key={idx} className="p-6 rounded-2xl border border-white/8 bg-white/[0.03] hover:border-violet-500/20 hover:bg-white/[0.05] transition-all duration-300">
-                <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: t.stars }).map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-violet-400 text-violet-400" />
-                  ))}
-                </div>
-                <p className="text-sm text-zinc-300 mb-6 leading-relaxed">"{t.quote}"</p>
-                <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
-                      {t.author[0]}
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-zinc-200">{t.author}</p>
-                      <p className="text-xs text-zinc-500">{t.role}, {t.company}</p>
-                    </div>
-                  </div>
-                  <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
-                    {t.metric}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Why Prash */}
       <section className="px-6 py-24 border-b border-white/5 bg-white/[0.015]">
         <div className="max-w-7xl mx-auto">
@@ -418,7 +326,7 @@ export default function Landing() {
               {
                 icon: Shield,
                 title: 'Enterprise security',
-                desc: 'SOC 2 Type II certified. Your code never leaves your environment. GitHub App permissions only.',
+                desc: 'Minimal GitHub App permissions. Your code stays in your environment. We only read CI logs and workflow definitions.',
               },
               {
                 icon: Cpu,
@@ -443,22 +351,6 @@ export default function Landing() {
             ))}
           </div>
 
-          <div className="mt-12 flex items-center justify-center gap-12 pt-12 border-t border-white/5">
-            <div className="text-center">
-              <div className="text-xs text-zinc-600 mb-1 uppercase tracking-wider">Backed by</div>
-              <div className="font-semibold text-zinc-300">Y Combinator</div>
-            </div>
-            <div className="w-px h-8 bg-white/5" />
-            <div className="text-center">
-              <div className="text-xs text-zinc-600 mb-1 uppercase tracking-wider">Built at</div>
-              <div className="font-semibold text-zinc-300">NSRCEL, IIM Bangalore</div>
-            </div>
-            <div className="w-px h-8 bg-white/5" />
-            <div className="text-center">
-              <div className="text-xs text-zinc-600 mb-1 uppercase tracking-wider">Certified</div>
-              <div className="font-semibold text-zinc-300">SOC 2 Type II</div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -481,7 +373,7 @@ export default function Landing() {
                 className="bg-violet-600 hover:bg-violet-500 text-white px-10 h-13 text-base rounded-xl shadow-lg shadow-violet-600/25 hover:shadow-violet-500/30 transition-all"
                 onClick={() => navigate('/login')}
               >
-                Install GitHub App
+                Get early access
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button
@@ -541,7 +433,7 @@ export default function Landing() {
           </div>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-600">
             <p>© 2026 Drufiy, Inc. All rights reserved.</p>
-            <p>Built at NSRCEL, IIM Bangalore · SOC 2 Type II</p>
+            <p>Built at NSRCEL, IIM Bangalore</p>
           </div>
         </div>
       </footer>

@@ -305,7 +305,7 @@ export default function HowItWorks() {
               {
                 icon: Shield,
                 title: 'Security-first',
-                desc: 'SOC 2 Type II certified. Minimal GitHub App permissions. Code never leaves your environment.',
+                desc: 'Minimal GitHub App permissions. Your code stays in your environment. We only read CI logs and workflow definitions.',
               },
               {
                 icon: AlertCircle,
@@ -398,7 +398,7 @@ export default function HowItWorks() {
             </div>
             <span>© 2026 Drufiy, Inc.</span>
           </div>
-          <p>Built at NSRCEL, IIM Bangalore · SOC 2 Type II</p>
+          <p>Built at NSRCEL, IIM Bangalore</p>
         </div>
       </footer>
     </div>
