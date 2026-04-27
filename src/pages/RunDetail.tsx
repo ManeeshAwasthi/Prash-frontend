@@ -144,20 +144,20 @@ function Stepper({ status }: { status: string }) {
           <div key={label} className="flex items-center">
             <div className="flex flex-col items-center gap-1">
               <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium border
+                className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium border
                   ${done ? 'bg-emerald-600 border-emerald-600 text-white' : ''}
                   ${active ? 'bg-violet-600 border-violet-600 text-white' : ''}
                   ${!done && !active ? 'border-zinc-700 text-zinc-500' : ''}
                 `}
               >
-                {done ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
+                {done ? <CheckCircle2 className="h-5 w-5" /> : i + 1}
               </div>
               <span className={`text-xs whitespace-nowrap ${active ? 'text-zinc-200' : 'text-zinc-500'}`}>
                 {label}
               </span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className={`h-px w-12 mb-4 mx-1 ${i < current ? 'bg-emerald-700' : 'bg-zinc-800'}`} />
+              <div className={`h-px w-16 mb-4 mx-1 ${i < current ? 'bg-emerald-700' : 'bg-zinc-800'}`} />
             )}
           </div>
         )
@@ -363,6 +363,14 @@ export default function RunDetail() {
 
       {d ? (
         <div className="space-y-4">
+          {/* AI analysis header */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
+            <span className="text-xs text-zinc-500 uppercase tracking-widest font-medium">AI Analysis</span>
+            <span className="text-xs text-zinc-600">·</span>
+            <span className="text-xs text-zinc-600">Iteration {d.iteration}</span>
+          </div>
+
           {/* Warnings */}
           {d.logs_truncated_warning && (
             <Alert className="border-zinc-700 bg-zinc-900/50">
@@ -393,8 +401,17 @@ export default function RunDetail() {
               <Badge variant="outline" className="text-xs border-zinc-700 text-zinc-400 font-mono">
                 {d.category}
               </Badge>
-              <Badge variant="outline" className="text-xs border-zinc-700 text-zinc-400">
-                {Math.round(d.confidence * 100)}% confidence
+              <Badge
+                variant="outline"
+                className={`text-xs ${
+                  d.confidence >= 0.9
+                    ? 'border-emerald-700 text-emerald-400 bg-emerald-950/30'
+                    : d.confidence >= 0.7
+                    ? 'border-amber-700 text-amber-400 bg-amber-950/30'
+                    : 'border-zinc-700 text-zinc-400'
+                }`}
+              >
+                • {Math.round(d.confidence * 100)}% confidence
               </Badge>
               <Badge
                 variant="outline"
@@ -422,9 +439,9 @@ export default function RunDetail() {
 
           {/* Proposed Fix */}
           {d.fix_type !== 'manual_required' && (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 border-l-2 border-l-amber-600">
+            <div className="bg-gradient-to-br from-violet-950/30 to-zinc-900 border border-violet-800/40 border-l-[3px] border-l-violet-500 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-3">
-                <Wrench className="h-4 w-4 text-amber-400" />
+                <Wrench className="h-4 w-4 text-violet-400" />
                 <span className="text-sm font-medium text-zinc-300">Proposed Fix</span>
               </div>
               <p className="text-zinc-400 text-sm leading-relaxed">{d.fix_description}</p>
@@ -446,9 +463,16 @@ export default function RunDetail() {
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <FileCode className="h-4 w-4 text-zinc-500" />
-                <span className="text-sm font-medium text-zinc-300">
-                  Files Changed ({d.files_changed.length})
-                </span>
+                <span className="text-sm font-medium text-zinc-300">Proposed changes</span>
+                {d.files_changed.some((fc) => fc.diff_risk) && (() => {
+                  const totalAdded = d.files_changed.reduce((s, fc) => s + (fc.diff_risk?.lines_added ?? 0), 0)
+                  const totalRemoved = d.files_changed.reduce((s, fc) => s + (fc.diff_risk?.lines_removed ?? 0), 0)
+                  return (
+                    <span className="inline-flex items-center gap-2 text-xs px-2 py-0.5 rounded-full bg-emerald-950/30 border border-emerald-800/50 text-emerald-400 font-mono">
+                      +{totalAdded} / -{totalRemoved}
+                    </span>
+                  )
+                })()}
               </div>
               {d.files_changed.map((fc) => (
                 <div key={fc.path} className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
@@ -508,7 +532,7 @@ export default function RunDetail() {
 
       {/* ── Sticky action footer ── */}
       {d && !isTerminal && (
-        <div className="fixed bottom-0 left-60 right-0 bg-zinc-950/95 backdrop-blur border-t border-zinc-800 px-8 py-4">
+        <div className="fixed bottom-0 left-0 md:left-60 right-0 bg-zinc-950/95 backdrop-blur border-t border-zinc-800 px-8 py-4">
           {isApplied ? (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
