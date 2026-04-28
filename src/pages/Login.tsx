@@ -30,7 +30,7 @@ export default function Login() {
 
   const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID as string
   const redirectUri = `${window.location.origin}/auth/callback`
-  const githubUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=read:user%20user:email%20repo%20admin:repo_hook&redirect_uri=${encodeURIComponent(redirectUri)}`
+  const githubUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=read:user%20user:email%20repo%20admin:repo_hook%20workflow&redirect_uri=${encodeURIComponent(redirectUri)}`
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
@@ -62,9 +62,10 @@ export default function Login() {
           </Button>
 
           <p className="text-zinc-600 text-xs text-center leading-relaxed">
-            We'll request <code className="text-zinc-500">repo</code> and{' '}
-            <code className="text-zinc-500">admin:repo_hook</code> scopes to
-            install webhooks on your repos.
+            We'll request <code className="text-zinc-500">repo</code>,{' '}
+            <code className="text-zinc-500">admin:repo_hook</code>, and{' '}
+            <code className="text-zinc-500">workflow</code> scopes to
+            install webhooks and fix CI workflow files.
           </p>
         </div>
       </div>
