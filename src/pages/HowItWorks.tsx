@@ -398,7 +398,6 @@ export default function HowItWorks() {
             </div>
             <span>© 2026 Drufiy, Inc.</span>
           </div>
-          <p>Built at NSRCEL, IIM Bangalore</p>
         </div>
       </footer>
     </div>
