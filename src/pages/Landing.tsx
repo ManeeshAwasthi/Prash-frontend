@@ -92,7 +92,7 @@ export default function Landing() {
       </section>
 
       <footer className="border-t border-zinc-800 px-8 py-6 text-center text-zinc-600 text-sm">
-        © 2026 Drufiy · Built at NSRCEL, IIM Bangalore
+        © 2026 Drufiy
       </footer>
     </div>
   )
