@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { XCircle, ChevronDown, Zap } from 'lucide-react'
 import { api } from '@/lib/api'
 import { supabase } from '@/lib/supabase'
-import { statusBadge, POLLING_STATUSES } from '@/lib/statusBadge'
+import { statusBadge, POLLING_STATUSES, ACTIVE_STATUSES } from '@/lib/statusBadge'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -30,6 +30,7 @@ interface CiRun {
   commit_message: string | null
   github_workflow_name: string | null
   created_at: string
+  diagnosis?: { fix_type: string } | null
 }
 
 type FilterOption = 'all' | 'active' | 'verified' | 'failed'
@@ -41,7 +42,7 @@ const FILTER_LABELS: Record<FilterOption, string> = {
   failed: 'Failed',
 }
 
-const ACTIVE_STATUSES = new Set(['pending', 'diagnosing', 'applying', 'iteration_2', 'fixed', 'waiting_verification', 'diagnosed'])
+// ACTIVE_STATUSES imported from statusBadge — 'diagnosed' is NOT active, it's a user-decision state
 const FAILED_STATUSES = new Set(['diagnosis_failed', 'exhausted'])
 
 function matchesFilter(run: CiRun, filter: FilterOption): boolean {
@@ -62,7 +63,7 @@ interface RowProps {
 
 function FailureRow({ run, isNew, isUpdated }: RowProps) {
   const navigate = useNavigate()
-  const { label, className } = statusBadge(run.status)
+  const { label, className } = statusBadge(run.status, run.diagnosis?.fix_type)
   const isPulsing = POLLING_STATUSES.has(run.status)
 
   return (

@@ -16,17 +16,23 @@ import {
   Loader2,
   XCircle,
   Info,
+  RefreshCw,
+  Lock,
+  SkipForward,
+  Zap,
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Input } from '@/components/ui/input'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -249,6 +255,237 @@ function DryRunDialog({
   )
 }
 
+// ── Manual action card ────────────────────────────────────────────────────────
+
+interface ManualActionCardProps {
+  runId: string
+  diagnosis: Diagnosis
+  onActionComplete: () => void
+}
+
+function ManualActionCard({ runId, diagnosis, onActionComplete }: ManualActionCardProps) {
+  const [secretName, setSecretName] = useState('')
+  const [secretValue, setSecretValue] = useState('')
+  const [showSecretForm, setShowSecretForm] = useState(false)
+  const [skipDialogOpen, setSkipDialogOpen] = useState(false)
+  const [skipTestName, setSkipTestName] = useState('')
+  const [skipTestFile, setSkipTestFile] = useState('')
+
+  // Extract test name from problem_summary heuristically
+  const inferredTestName = (() => {
+    const m = diagnosis.problem_summary.match(/test_\w+|it\(['"](.+?)['"]\)|describe\(['"](.+?)['"]\)/)
+    return m ? (m[1] || m[2] || m[0]) : ''
+  })()
+
+  const forceFix = useMutation({
+    mutationFn: () => api(`/runs/${runId}/force-fix`, { method: 'POST' }),
+    onSuccess: () => {
+      toast.success('Force-fix queued — Prash will retry with a stronger prompt')
+      onActionComplete()
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
+  const addSecret = useMutation({
+    mutationFn: () => api(`/runs/${runId}/add-secret`, {
+      method: 'POST',
+      body: JSON.stringify({ name: secretName, value: secretValue }),
+    }),
+    onSuccess: (data: unknown) => {
+      const r = data as { secret_name: string; workflow_rerun: boolean }
+      toast.success(`Secret "${r.secret_name}" added${r.workflow_rerun ? ' — workflow re-triggered' : ''}`)
+      setShowSecretForm(false)
+      setSecretName('')
+      setSecretValue('')
+      onActionComplete()
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
+  const skipTest = useMutation({
+    mutationFn: () => api(`/runs/${runId}/skip-test`, {
+      method: 'POST',
+      body: JSON.stringify({ test_name: skipTestName, test_file: skipTestFile || undefined }),
+    }),
+    onSuccess: (data: unknown) => {
+      const r = data as { pr_url: string; pr_number: number }
+      toast.success(`PR #${r.pr_number} created — test skipped`, {
+        action: { label: 'View PR', onClick: () => window.open(r.pr_url, '_blank') },
+      })
+      setSkipDialogOpen(false)
+      onActionComplete()
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
+  const rediagnose = useMutation({
+    mutationFn: () => api(`/runs/${runId}/rediagnose`, { method: 'POST' }),
+    onSuccess: () => {
+      toast.success('Re-diagnosing with a fresh model attempt…')
+      onActionComplete()
+    },
+    onError: (e: Error) => toast.error(e.message),
+  })
+
+  const category = diagnosis.category
+
+  return (
+    <div className="bg-zinc-900 border border-orange-900/50 rounded-xl p-5 space-y-4">
+      <div className="flex items-center gap-2">
+        <AlertTriangle className="h-4 w-4 text-orange-400" />
+        <span className="text-sm font-medium text-zinc-300">Available Actions</span>
+        <Badge variant="outline" className="text-xs border-zinc-700 text-zinc-500 ml-auto">
+          {category}
+        </Badge>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {/* Force-fix: for any code/workflow/dependency issue */}
+        {(category === 'code' || category === 'workflow_config' || category === 'dependency') && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-violet-700 text-violet-300 hover:bg-violet-900/30"
+            disabled={forceFix.isPending}
+            onClick={() => forceFix.mutate()}
+          >
+            {forceFix.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Zap className="h-3.5 w-3.5 mr-1.5" />}
+            Try Fix Anyway
+          </Button>
+        )}
+
+        {/* Skip test: for code/flaky_test with a test name */}
+        {(category === 'code' || category === 'flaky_test') && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-amber-700 text-amber-300 hover:bg-amber-900/30"
+            onClick={() => {
+              setSkipTestName(inferredTestName)
+              setSkipDialogOpen(true)
+            }}
+          >
+            <SkipForward className="h-3.5 w-3.5 mr-1.5" />
+            Skip This Test
+          </Button>
+        )}
+
+        {/* Add secret: for environment issues */}
+        {category === 'environment' && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-amber-700 text-amber-300 hover:bg-amber-900/30"
+            onClick={() => setShowSecretForm(!showSecretForm)}
+          >
+            <Lock className="h-3.5 w-3.5 mr-1.5" />
+            Add Secret
+          </Button>
+        )}
+
+        {/* Open in GitHub: for unknown/database */}
+        {(category === 'unknown' || category === 'database_migration') && (
+          <Button size="sm" variant="outline" className="border-zinc-700 text-zinc-300" asChild>
+            <a href={`https://github.com`} target="_blank" rel="noreferrer">
+              <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+              Open in GitHub
+            </a>
+          </Button>
+        )}
+
+        {/* Re-diagnose: always available as last resort */}
+        <Button
+          size="sm"
+          variant="outline"
+          className="border-zinc-700 text-zinc-400 hover:bg-zinc-800"
+          disabled={rediagnose.isPending}
+          onClick={() => rediagnose.mutate()}
+        >
+          {rediagnose.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <RefreshCw className="h-3.5 w-3.5 mr-1.5" />}
+          Re-diagnose
+        </Button>
+      </div>
+
+      {/* Add Secret inline form */}
+      {showSecretForm && (
+        <div className="border border-zinc-700 rounded-lg p-4 space-y-3 bg-zinc-950/50">
+          <p className="text-zinc-400 text-xs">
+            This will add the secret to your GitHub repo's Actions secrets and re-trigger the failed workflow.
+          </p>
+          <div className="flex gap-2">
+            <Input
+              placeholder="SECRET_NAME"
+              value={secretName}
+              onChange={(e) => setSecretName(e.target.value)}
+              className="bg-zinc-900 border-zinc-700 text-zinc-100 font-mono text-sm h-8"
+            />
+            <Input
+              type="password"
+              placeholder="secret value"
+              value={secretValue}
+              onChange={(e) => setSecretValue(e.target.value)}
+              className="bg-zinc-900 border-zinc-700 text-zinc-100 text-sm h-8"
+            />
+            <Button
+              size="sm"
+              className="bg-amber-600 hover:bg-amber-500 text-white shrink-0"
+              disabled={!secretName || !secretValue || addSecret.isPending}
+              onClick={() => addSecret.mutate()}
+            >
+              {addSecret.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Add'}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Skip Test dialog */}
+      <Dialog open={skipDialogOpen} onOpenChange={setSkipDialogOpen}>
+        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-zinc-100">Skip Test</DialogTitle>
+            <DialogDescription className="text-zinc-500">
+              Add @pytest.mark.skip or test.skip to the failing test.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <label className="text-zinc-400 text-xs mb-1 block">Test name (function name)</label>
+              <Input
+                placeholder="test_my_function"
+                value={skipTestName}
+                onChange={(e) => setSkipTestName(e.target.value)}
+                className="bg-zinc-950 border-zinc-700 text-zinc-100 font-mono"
+              />
+            </div>
+            <div>
+              <label className="text-zinc-400 text-xs mb-1 block">Test file path (optional — auto-detected if blank)</label>
+              <Input
+                placeholder="tests/test_foo.py"
+                value={skipTestFile}
+                onChange={(e) => setSkipTestFile(e.target.value)}
+                className="bg-zinc-950 border-zinc-700 text-zinc-100 font-mono"
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" className="border-zinc-700" onClick={() => setSkipDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                className="bg-amber-600 hover:bg-amber-500 text-white"
+                disabled={!skipTestName || skipTest.isPending}
+                onClick={() => skipTest.mutate()}
+              >
+                {skipTest.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                Create Skip PR
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function RunDetail() {
@@ -304,9 +541,11 @@ export default function RunDetail() {
   }
 
   const d = run.diagnosis
-  const { label, className } = statusBadge(run.status)
+  const { label, className } = statusBadge(run.status, d?.fix_type)
   const canApply = d && !['manual_required'].includes(d.fix_type) && !d.is_flaky_test
-  const isTerminal = ['verified', 'diagnosis_failed', 'exhausted', 'skipped'].includes(run.status)
+  // 'diagnosed' is terminal when the model has decided it can't auto-fix (manual_required or flaky)
+  const isDiagnosedTerminal = run.status === 'diagnosed' && d && (d.fix_type === 'manual_required' || d.is_flaky_test)
+  const isTerminal = ['verified', 'diagnosis_failed', 'exhausted', 'skipped'].includes(run.status) || !!isDiagnosedTerminal
   const isApplied = ['fixed', 'waiting_verification', 'verified'].includes(run.status)
 
   return (
@@ -357,6 +596,26 @@ export default function RunDetail() {
           <Loader2 className="h-4 w-4 text-amber-400 animate-spin" />
           <AlertDescription className="text-amber-400">
             Initial fix didn't pass CI. Prash is running a second analysis…
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Diagnosed + manual_required — clear terminal state banner */}
+      {run.status === 'diagnosed' && d?.fix_type === 'manual_required' && (
+        <Alert className="mb-6 border-orange-800 bg-orange-950/20">
+          <AlertTriangle className="h-4 w-4 text-orange-400" />
+          <AlertDescription className="text-orange-300">
+            Prash diagnosed the issue but can't safely auto-fix it. Review the diagnosis below and apply the fix manually.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Diagnosed + review_recommended — show fix with action buttons */}
+      {run.status === 'diagnosed' && d?.fix_type === 'review_recommended' && (
+        <Alert className="mb-6 border-violet-800 bg-violet-950/20">
+          <Info className="h-4 w-4 text-violet-400" />
+          <AlertDescription className="text-violet-300">
+            Prash has a proposed fix ready for your review. Check the diff below before applying.
           </AlertDescription>
         </Alert>
       )}
@@ -449,13 +708,21 @@ export default function RunDetail() {
           )}
 
           {d.fix_type === 'manual_required' && (
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 border-l-2 border-l-zinc-600">
-              <div className="flex items-center gap-2 mb-3">
-                <AlertTriangle className="h-4 w-4 text-zinc-400" />
-                <span className="text-sm font-medium text-zinc-300">Manual Action Required</span>
+            <>
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 border-l-2 border-l-zinc-600">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertTriangle className="h-4 w-4 text-zinc-400" />
+                  <span className="text-sm font-medium text-zinc-300">Manual Action Required</span>
+                </div>
+                <p className="text-zinc-400 text-sm leading-relaxed">{d.fix_description}</p>
               </div>
-              <p className="text-zinc-400 text-sm leading-relaxed">{d.fix_description}</p>
-            </div>
+              {/* Action card — always shown for manual_required */}
+              <ManualActionCard
+                runId={run.id}
+                diagnosis={d}
+                onActionComplete={() => qc.invalidateQueries({ queryKey: ['run', id] })}
+              />
+            </>
           )}
 
           {/* Files Changed */}
@@ -567,9 +834,7 @@ export default function RunDetail() {
                 )}
               </div>
             </div>
-          ) : d.fix_type === 'manual_required' || d.is_flaky_test ? (
-            <p className="text-zinc-500 text-sm">Manual review required — no auto-fix available.</p>
-          ) : (
+          ) : isDiagnosedTerminal ? null : (
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"

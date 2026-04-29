@@ -27,7 +27,10 @@ export default function AuthCallback() {
 
     api<CallbackResponse>('/auth/github/callback', {
       method: 'POST',
-      body: JSON.stringify({ code }),
+      body: JSON.stringify({
+        code,
+        redirect_uri: `${window.location.origin}/auth/callback`,
+      }),
     })
       .then(({ token, user }) => {
         login(token, user)

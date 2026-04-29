@@ -10,14 +10,24 @@ import {
   CheckCircle2,
   ArrowRight,
   TrendingUp,
+  AlertTriangle,
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { supabase } from '@/lib/supabase'
 import { statusBadge } from '@/lib/statusBadge'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
+
+// ── Scope check ───────────────────────────────────────────────────────────────
+
+interface ScopeCheck {
+  has_workflow_scope: boolean
+  scopes: string[]
+}
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -116,8 +126,18 @@ function ActivityRow({ run }: { run: CiRun }) {
 
 export default function Dashboard() {
   const qc = useQueryClient()
+  const { user } = useAuth()
   const [flashCard, setFlashCard] = useState<keyof Stats | null>(null)
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Check if existing user's token has the workflow scope
+  const { data: scopeCheck } = useQuery<ScopeCheck>({
+    queryKey: ['scope-check', user?.id],
+    queryFn: () => api('/auth/scopes'),
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000, // re-check every 5 min at most
+    retry: false,
+  })
 
   const {
     data: stats,
@@ -200,6 +220,28 @@ export default function Dashboard() {
         <h1 className="text-xl font-semibold text-zinc-100">Dashboard</h1>
         <p className="text-zinc-500 text-sm mt-1">Your CI, always watched.</p>
       </div>
+
+      {/* Re-authorize banner — shown only when token lacks workflow scope */}
+      {scopeCheck && !scopeCheck.has_workflow_scope && (
+        <Alert className="mb-6 border-amber-800 bg-amber-950/20">
+          <AlertTriangle className="h-4 w-4 text-amber-400" />
+          <AlertDescription className="flex items-center justify-between gap-4">
+            <span className="text-amber-300 text-sm">
+              Your GitHub token is missing the <code className="bg-amber-900/40 px-1 rounded">workflow</code> scope — Drufiy can't fix CI workflow files without it.
+            </span>
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-amber-700 text-amber-300 hover:bg-amber-900/30 shrink-0"
+              asChild
+            >
+              <a href={`https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}&scope=read:user%20user:email%20repo%20admin:repo_hook%20workflow&redirect_uri=${encodeURIComponent(window.location.origin + '/auth/callback')}`}>
+                Re-authorize
+              </a>
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Stat cards */}
       {statsError && (
