@@ -49,7 +49,9 @@ export default function AppLayout() {
 
         {/* Wordmark */}
         <div className="flex items-center gap-2 px-5 py-5 border-b border-zinc-800">
-          <Zap className="h-5 w-5 text-violet-400" />
+          <div className="w-6 h-6 rounded-md bg-amber-500/20 flex items-center justify-center border border-amber-500/30">
+            <span className="font-bold text-amber-400 text-xs">D</span>
+          </div>
           <span className="font-semibold tracking-tight text-zinc-100">Prash by Drufiy</span>
         </div>
 

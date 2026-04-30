@@ -272,14 +272,14 @@ export default function Dashboard() {
         ) : stats ? (
           <>
             {/* Hero card */}
-            <div className="bg-gradient-to-br from-violet-950/40 to-zinc-900 border border-violet-800/30 rounded-xl p-7 flex flex-col justify-between">
+            <div className="bg-gradient-to-br from-amber-950/20 to-zinc-900 border border-amber-800/20 rounded-xl p-7 flex flex-col justify-between">
               <span className="text-zinc-400 text-xs font-medium uppercase tracking-wider">Engineering hours saved</span>
               <div className="my-3">
-                <div className="text-5xl font-bold tracking-tight text-violet-200">
+                <div className="text-5xl font-bold tracking-tight text-amber-100">
                   {Math.round(stats.verified_fixes * 2.5)} hrs
                 </div>
               </div>
-              <p className="text-zinc-500 text-xs">Based on avg 2.5 hours per CI debugging incident.</p>
+              <p className="text-zinc-500 text-xs"></p>
             </div>
 
             {/* Three smaller stats */}

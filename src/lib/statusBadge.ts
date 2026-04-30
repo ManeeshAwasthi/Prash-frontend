@@ -13,10 +13,10 @@ export function statusBadge(status: string, fixType?: string | null): { label: s
       // safe_auto_apply or unknown — should auto-apply shortly
       return { label: 'Ready to Apply', className: 'border-blue-700 text-blue-400' }
     case 'applying':
-      return { label: 'Creating PR…', className: 'border-violet-700 text-violet-400' }
+      return { label: 'Creating PR…', className: 'border-amber-700 text-amber-400' }
     case 'fixed':
     case 'waiting_verification':
-      return { label: 'Verifying…', className: 'border-violet-700 text-violet-400' }
+      return { label: 'Verifying…', className: 'border-amber-700 text-amber-400' }
     case 'verified':
       return { label: 'Verified ✓', className: 'border-emerald-700 text-emerald-400' }
     case 'iteration_2':

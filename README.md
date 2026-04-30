@@ -1,6 +1,12 @@
-# React + TypeScript + Vite
+# Prash Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **Full technical documentation:** See [PROJECT_DOC.md](../drufiy-backend/PROJECT_DOC.md) in the backend repo for complete architecture, API specs, and setup instructions covering both frontend and backend.
+
+## Frontend Stack
+
+React 19 + TypeScript + Vite + Tailwind CSS v4 + Supabase Realtime
+
+See [FRONTEND.md](./FRONTEND.md) for frontend-specific reference documentation.
 
 Currently, two official plugins are available:
 

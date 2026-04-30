@@ -38,7 +38,9 @@ export default function Login() {
         {/* Logo */}
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
-            <Zap className="h-6 w-6 text-violet-400" />
+            <div className="w-7 h-7 rounded-md bg-amber-500/20 flex items-center justify-center border border-amber-500/30">
+              <span className="font-bold text-amber-400 text-sm">D</span>
+            </div>
             <span className="font-semibold text-lg text-zinc-100">Prash by Drufiy</span>
           </div>
           <p className="text-zinc-500 text-sm">Your CI never breaks twice.</p>
