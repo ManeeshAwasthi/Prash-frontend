@@ -135,10 +135,10 @@ export default function Landing() {
             variants={fadeUp}
             className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-6"
           >
-            <span className="font-bold text-white">When your Your CI fails,
-      <br />
+            When your CI fails.
+            <br />
             <span className="text-yellow-400">
-              We fix it and all You do is merge!
+              We fix it. You merge.
             </span>
           </motion.h1>
 
