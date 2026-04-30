@@ -5,8 +5,36 @@ import {
   ArrowRight, Brain, Code2, Cpu, ChevronRight,
   Clock,
 } from 'lucide-react'
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/AuthContext'
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+}
+
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1 } },
+}
+
+function AnimatedSection({ children, className }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+  return (
+    <motion.div
+      ref={ref}
+      variants={stagger}
+      initial="hidden"
+      animate={inView ? 'show' : 'hidden'}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}
 
 export default function Landing() {
   const { user, loading } = useAuth()
@@ -97,23 +125,30 @@ export default function Landing() {
 
       {/* Hero */}
       <section className="relative px-4 sm:px-6 pt-20 sm:pt-28 pb-16 sm:pb-24 text-center overflow-hidden">
-        <div className="max-w-5xl mx-auto relative z-10">
-
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-6">
+        <motion.div
+          className="max-w-5xl mx-auto relative z-10"
+          variants={stagger}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.h1
+            variants={fadeUp}
+            className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight leading-[1.05] mb-6"
+          >
             Your CI fails.
             <br />
             <span className="text-yellow-400">
               We fix it. You merge.
             </span>
-          </h1>
+          </motion.h1>
 
-          <p className="text-base sm:text-xl text-zinc-400 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed">
+          <motion.p variants={fadeUp} className="text-base sm:text-xl text-zinc-400 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed">
             Prash by Drufiy watches your GitHub Actions. When a build breaks, it diagnoses the root cause, opens a PR with the fix, and verifies CI passes — usually before you've finished your coffee.
-          </p>
+          </motion.p>
 
-          <p className="text-sm text-zinc-600 mb-8">Currently in early access — onboarding design partners.</p>
+          <motion.p variants={fadeUp} className="text-sm text-zinc-600 mb-8">Currently in early access — onboarding design partners.</motion.p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 sm:mb-12">
+          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 sm:mb-12">
             <Button
               size="lg"
               className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-8 h-12 text-base rounded-xl shadow-lg shadow-yellow-400/20 transition-all"
@@ -130,9 +165,9 @@ export default function Landing() {
             >
               View live demo
             </Button>
-          </div>
+          </motion.div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-zinc-500">
+          <motion.div variants={fadeUp} className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-zinc-500">
             <span className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-yellow-400" />
               GitHub App install in 30s
@@ -141,8 +176,8 @@ export default function Landing() {
               <CheckCircle2 className="h-4 w-4 text-yellow-400" />
               Works with any GitHub Actions
             </span>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Hero visual — pipeline flow */}
         <div className="mt-16 sm:mt-20 max-w-4xl mx-auto relative z-10">
@@ -152,7 +187,13 @@ export default function Landing() {
                 {steps.map((step, idx) => {
                   const Icon = step.icon
                   return (
-                    <div key={idx} className="flex sm:flex-col items-center gap-3 flex-1 w-full sm:w-auto">
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 + idx * 0.12, duration: 0.4, ease: 'easeOut' }}
+                      className="flex sm:flex-col items-center gap-3 flex-1 w-full sm:w-auto"
+                    >
                       <div className="relative">
                         <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border ${
                           idx === 0 ? 'border-yellow-500/50 bg-yellow-500/10' :
@@ -176,7 +217,7 @@ export default function Landing() {
                       {idx < steps.length - 1 && (
                         <ArrowRight className="sm:hidden h-4 w-4 text-zinc-600 shrink-0 ml-auto" />
                       )}
-                    </div>
+                    </motion.div>
                   )
                 })}
               </div>
@@ -188,21 +229,23 @@ export default function Landing() {
       {/* Agents */}
       <section id="agents" className="px-4 sm:px-6 py-16 sm:py-24 border-b border-white/5">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <p className="text-yellow-400 text-sm font-medium uppercase tracking-widest mb-3">Specialized agents</p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">A team built for reliability</h2>
-            <p className="text-zinc-400 max-w-2xl mx-auto text-base sm:text-lg">
+          <AnimatedSection className="text-center mb-12 sm:mb-16">
+            <motion.p variants={fadeUp} className="text-yellow-400 text-sm font-medium uppercase tracking-widest mb-3">Specialized agents</motion.p>
+            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">A team built for reliability</motion.h2>
+            <motion.p variants={fadeUp} className="text-zinc-400 max-w-2xl mx-auto text-base sm:text-lg">
               Three specialized agents working in concert to keep your CI reliable, fast, and secure.
-            </p>
-          </div>
+            </motion.p>
+          </AnimatedSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <AnimatedSection className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {agents.map((agent, idx) => {
               const Icon = agent.icon
               return (
-                <div
+                <motion.div
                   key={idx}
-                  className={`group relative p-5 rounded-2xl border border-white/8 bg-white/[0.02] ${agent.borderHover} transition-all duration-300 hover:bg-white/[0.05] cursor-default`}
+                  variants={fadeUp}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className={`group relative p-5 rounded-2xl border border-white/8 bg-white/[0.02] ${agent.borderHover} transition-colors duration-300 hover:bg-white/[0.05] cursor-default`}
                 >
                   <div className={`absolute inset-0 rounded-2xl bg-gradient-to-b ${agent.color} opacity-0 group-hover:opacity-100 transition-opacity`} />
                   <div className="relative">
@@ -215,10 +258,10 @@ export default function Landing() {
                     <h3 className="font-semibold text-sm mb-2 text-white">{agent.title}</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed">{agent.description}</p>
                   </div>
-                </div>
+                </motion.div>
               )
             })}
-          </div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -246,14 +289,14 @@ export default function Landing() {
               </Button>
             </div>
 
-            <div className="space-y-3">
+            <AnimatedSection className="space-y-3">
               {[
                 { n: '01', title: 'Connect your repo', desc: 'Install via GitHub App — takes 30 seconds and works with any existing workflow.', icon: GitBranch },
                 { n: '02', title: 'Detect & diagnose', desc: 'Prash watches your GitHub Actions and analyzes failures instantly as they happen.', icon: Search },
                 { n: '03', title: 'Fix & create PR', desc: 'Automatic fixes are generated, tested, and a PR is opened and ready for review.', icon: GitPullRequest },
                 { n: '04', title: 'Verify & ship', desc: 'All CI tests pass before Prash marks the fix verified. No false positives.', icon: CheckCircle2 },
               ].map(({ n, title, desc, icon: Icon }, idx) => (
-                <div key={idx} className="flex gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:border-yellow-400/20 transition-colors group">
+                <motion.div key={idx} variants={fadeUp} className="flex gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:border-yellow-400/20 transition-colors group">
                   <div className="shrink-0 w-8 h-8 rounded-lg bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center mt-0.5">
                     <Icon className="w-4 h-4 text-yellow-400" />
                   </div>
@@ -264,9 +307,9 @@ export default function Landing() {
                     </div>
                     <p className="text-xs text-zinc-500 leading-relaxed">{desc}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </AnimatedSection>
           </div>
         </div>
       </section>
@@ -274,15 +317,15 @@ export default function Landing() {
       {/* Why Prash */}
       <section className="px-4 sm:px-6 py-16 sm:py-24 border-b border-white/5">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <p className="text-yellow-400 text-sm font-medium uppercase tracking-widest mb-3">Why Prash</p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">Built for developers by developers</h2>
-            <p className="text-zinc-400 text-base sm:text-lg max-w-xl mx-auto">
+          <AnimatedSection className="text-center mb-12 sm:mb-16">
+            <motion.p variants={fadeUp} className="text-yellow-400 text-sm font-medium uppercase tracking-widest mb-3">Why Prash</motion.p>
+            <motion.h2 variants={fadeUp} className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">Built for developers by developers</motion.h2>
+            <motion.p variants={fadeUp} className="text-zinc-400 text-base sm:text-lg max-w-xl mx-auto">
               Created by engineers who've spent years scaling CI/CD at high-growth companies.
-            </p>
-          </div>
+            </motion.p>
+          </AnimatedSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <AnimatedSection className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {[
               {
                 icon: Clock,
@@ -305,7 +348,7 @@ export default function Landing() {
                 desc: 'Works with any GitHub Actions workflow — monorepos, matrix builds, custom runners.',
               },
             ].map(({ icon: Icon, title, desc }, idx) => (
-              <div key={idx} className="flex gap-4 p-5 rounded-2xl border border-white/5 hover:border-yellow-400/20 hover:bg-white/[0.02] transition-all">
+              <motion.div key={idx} variants={fadeUp} whileHover={{ y: -3, transition: { duration: 0.2 } }} className="flex gap-4 p-5 rounded-2xl border border-white/5 hover:border-yellow-400/20 hover:bg-white/[0.02] transition-colors">
                 <div className="shrink-0 w-9 h-9 rounded-lg bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center">
                   <Icon className="w-4 h-4 text-yellow-400" />
                 </div>
@@ -313,9 +356,9 @@ export default function Landing() {
                   <h3 className="font-semibold text-sm mb-1.5 text-white">{title}</h3>
                   <p className="text-xs text-zinc-500 leading-relaxed">{desc}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </AnimatedSection>
 
         </div>
       </section>
@@ -324,15 +367,15 @@ export default function Landing() {
       <section className="px-4 sm:px-6 py-20 sm:py-28">
         <div className="max-w-3xl mx-auto text-center relative">
           <div className="absolute inset-0 bg-yellow-400/5 blur-3xl rounded-full pointer-events-none" />
-          <div className="relative">
-            <p className="text-yellow-400 text-sm font-medium uppercase tracking-widest mb-4">Get started today</p>
-            <h2 className="text-3xl sm:text-5xl font-bold mb-6 tracking-tight leading-tight">
+          <AnimatedSection className="relative">
+            <motion.p variants={fadeUp} className="text-yellow-400 text-sm font-medium uppercase tracking-widest mb-4">Get started today</motion.p>
+            <motion.h2 variants={fadeUp} className="text-3xl sm:text-5xl font-bold mb-6 tracking-tight leading-tight">
               Stop debugging CI.
-            </h2>
-            <p className="text-zinc-400 text-base sm:text-lg mb-10 leading-relaxed">
+            </motion.h2>
+            <motion.p variants={fadeUp} className="text-zinc-400 text-base sm:text-lg mb-10 leading-relaxed">
               Install the GitHub App in 30 seconds. We're onboarding design partners now.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            </motion.p>
+            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button
                 size="lg"
                 className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-10 h-12 text-base rounded-xl shadow-lg shadow-yellow-400/20 transition-all"
@@ -349,8 +392,8 @@ export default function Landing() {
               >
                 Learn how it works
               </Button>
-            </div>
-          </div>
+            </motion.div>
+          </AnimatedSection>
         </div>
       </section>
 
