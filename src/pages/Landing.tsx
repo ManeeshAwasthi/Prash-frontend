@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Zap, GitBranch, Search, GitPullRequest, CheckCircle2,
+  GitBranch, Search, GitPullRequest, CheckCircle2,
   ArrowRight, Brain, Code2, Cpu, ChevronRight,
   Clock,
 } from 'lucide-react'
