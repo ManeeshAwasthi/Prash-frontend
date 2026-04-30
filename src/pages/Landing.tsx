@@ -61,7 +61,7 @@ export default function Landing() {
       <nav className="sticky top-0 z-50 border-b border-white/8 bg-black/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="Prash" className="w-7 h-7 rounded-md object-contain" />
+            <img src="/logo.svg" alt="Prash" className="w-7 h-7 rounded-md object-contain" />
             <span className="font-bold text-base tracking-tight text-white">Prash</span>
             <span className="text-xs text-zinc-500 font-normal ml-0.5">by Drufiy</span>
           </div>
@@ -360,7 +360,7 @@ export default function Landing() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 sm:gap-10 mb-10 sm:mb-12 pb-10 sm:pb-12 border-b border-white/5">
             <div className="col-span-2">
               <div className="flex items-center gap-2.5 mb-4">
-                <img src="/logo.png" alt="Prash" className="w-7 h-7 rounded-md object-contain" />
+                <img src="/logo.svg" alt="Prash" className="w-7 h-7 rounded-md object-contain" />
                 <span className="font-bold text-white">Prash by Drufiy</span>
               </div>
               <p className="text-sm text-zinc-500 leading-relaxed max-w-xs">

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" fill="#000000"/>
+  <!-- P bowl top stroke -->
+  <path d="M32 18 L32 82 L42 82 L42 58 Q42 58 54 58 Q72 58 78 48 Q83 40 78 30 Q72 18 54 18 Z" fill="#F5A800"/>
+  <!-- Bowl interior cutout -->
+  <path d="M42 27 L54 27 Q66 27 68 35 Q70 42 64 48 Q60 52 54 52 L42 52 Z" fill="#000000"/>
+  <!-- Diagonal cut on stem -->
+  <polygon points="32,68 42,60 42,82 32,82" fill="#000000"/>
+  <polygon points="32,72 40,66 40,82 32,82" fill="#F5A800" opacity="0.85"/>
+</svg>

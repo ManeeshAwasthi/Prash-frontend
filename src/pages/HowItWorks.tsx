@@ -132,7 +132,7 @@ export default function HowItWorks() {
       <nav className="sticky top-0 z-50 border-b border-white/5 bg-black/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <button onClick={() => navigate('/')} className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-            <img src="/logo.png" alt="Prash" className="w-7 h-7 rounded-md object-contain" />
+            <img src="/logo.svg" alt="Prash" className="w-7 h-7 rounded-md object-contain" />
             <span className="font-bold text-base tracking-tight">Prash</span>
             <span className="text-xs text-zinc-500 font-normal ml-0.5">by Drufiy</span>
           </button>
@@ -387,7 +387,7 @@ export default function HowItWorks() {
       <footer className="border-t border-white/5 bg-white/[0.02] px-6 py-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-600">
           <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="Prash" className="w-5 h-5 rounded object-contain" />
+            <img src="/logo.svg" alt="Prash" className="w-5 h-5 rounded object-contain" />
             <span>© 2026 Drufiy, Inc.</span>
           </div>
         </div>
