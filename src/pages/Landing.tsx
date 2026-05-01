@@ -143,7 +143,7 @@ export default function Landing() {
           </motion.h1>
 
           <motion.p variants={fadeUp} className="text-base sm:text-xl text-zinc-400 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed">
-            Prash by Drufiy watches your GitHub Actions. When a build breaks, it diagnoses the root cause, opens a PR with the fix, and verifies CI passes — usually before you've finished your coffee.
+            Prash by Drufiy watches your GitHub Actions. When a build breaks, it diagnoses the root cause, opens a PR with the fix, and verifies CI passes, usually before you've finished your coffee.
           </motion.p>
 
           <motion.p variants={fadeUp} className="text-sm text-zinc-600 mb-8">Early access is live now</motion.p>
