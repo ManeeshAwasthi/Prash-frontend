@@ -136,16 +136,8 @@ function ConnectRepoDialog({
           default_branch: repo.default_branch,
         }),
       }),
-    onSuccess: (data: { webhook_pending?: boolean; repo_full_name?: string }, repo) => {
-      if (data?.webhook_pending) {
-        const owner = repo.full_name.split('/')[0]
-        toast.warning(
-          `Repo connected — but webhook setup is pending. Ask @${owner} to install the Prash GitHub App, or add the webhook manually in repo settings.`,
-          { duration: 8000 },
-        )
-      } else {
-        toast.success('Repo connected — webhook installed.')
-      }
+    onSuccess: (_data, repo) => {
+      toast.success('Repo connected — webhook installed.')
       qc.invalidateQueries({ queryKey: ['connected-repos'] })
       posthog.capture('repo_connected', {
         repo_name: repo.full_name,
